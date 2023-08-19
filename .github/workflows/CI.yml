@@ -4,7 +4,6 @@ run-name: ${{ github.actor }} is testing out GitHub Actions 🚀
 on:
   push:
     branches:
-      - CI
       - release/integrate_0713
   pull_request:
     types: [opened, reopened, synchronize]
