@@ -2,10 +2,13 @@ name: CI
 run-name: ${{ github.actor }} is testing out GitHub Actions 🚀
 
 on:
+  push:
+    branches:
+      - CI
+      - release/integrate_0713
   pull_request:
     types: [opened, reopened, synchronize]
     branches:
-      - main
       - release/integrate_0713
 
 jobs:
