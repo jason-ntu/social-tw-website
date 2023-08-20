@@ -27,16 +27,16 @@ class User {
     }
 
     /**
-     * This function should be called before user signs up for 
+     * This function should be called before user signs up for
      * it will load the user's signature and hashUserId from local storage.
-     * @returns 
-     */    // Two states: user had logged in twitter and hasn't
+     * @returns
+     */ // Two states: user had logged in twitter and hasn't
     setFromServer() {
         this.fromServer = true
     }
 
     async load() {
-        console.log("load .....")
+        console.log('load .....')
         this.hashUserId = localStorage.getItem('hashUserId') ?? ''
 
         // TODO: if this is necessary?
@@ -48,17 +48,16 @@ class User {
         }
 
         this.signature = localStorage.getItem('signature') ?? ''
-        
 
         if (this.hashUserId?.length == 0 && this.signature?.length == 0) {
-            console.error("HashUserId and signature are wrong")
+            console.error('HashUserId and signature are wrong')
             return
         }
 
         // TODO: change hashUserId to signature
         // const identity = new Identity(signature)
         const identity = new Identity(this.signature)
-        const {UNIREP_ADDRESS, APP_ADDRESS, ETH_PROVIDER_URL} = await fetch(
+        const { UNIREP_ADDRESS, APP_ADDRESS, ETH_PROVIDER_URL } = await fetch(
             `${SERVER}/api/config`
         ).then((r) => r.json())
 
@@ -84,7 +83,8 @@ class User {
         // TODO: check here to modify
         this.hasSignedUp = await userState.hasSignedUp()
         await this.loadData()
-        this.latestTransitionedEpoch = await this.userState.latestTransitionedEpoch()
+        this.latestTransitionedEpoch =
+            await this.userState.latestTransitionedEpoch()
     }
 
     get fieldCount() {
@@ -117,7 +117,7 @@ class User {
             },
             body: JSON.stringify({
                 hashUserId,
-            })
+            }),
         }).then((r) => r.json())
         console.log(data)
         return data
@@ -234,7 +234,7 @@ class User {
             attester_id: attesterId,
             value: values,
         })
-        const {publicSignals, proof} = await prover.genProofAndPublicSignals(
+        const { publicSignals, proof } = await prover.genProofAndPublicSignals(
             'dataProof',
             circuitInputs
         )
@@ -248,12 +248,12 @@ class User {
     }
 
     logout() {
-        this.hasSignedUp = false;  // set hasSignedUp to false when logout
-        this.userState = undefined; // Clear user state
-        this.signature = '';
-        this.hashUserId = '';
-        localStorage.removeItem('signature'); // Clear local storage
-        localStorage.removeItem('hashUserId'); // Clear local storage
+        this.hasSignedUp = false // set hasSignedUp to false when logout
+        this.userState = undefined // Clear user state
+        this.signature = ''
+        this.hashUserId = ''
+        localStorage.removeItem('signature') // Clear local storage
+        localStorage.removeItem('hashUserId') // Clear local storage
     }
 }
 
@@ -261,4 +261,4 @@ const defaultValue = new User()
 
 const UserContext = createContext<User>(defaultValue)
 
-export {User, UserContext};
+export { User, UserContext }

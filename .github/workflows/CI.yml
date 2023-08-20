@@ -16,6 +16,14 @@ jobs:
     circuits-test:
         name: Circuits Test
         runs-on: ubuntu-22.04
+        defaults:
+          run:
+            shell: bash
+        container:
+            image: ghcr.io/jason-ntu/ubuntu-22.04:circom
+            credentials:
+                username: jason-ntu
+                password: ${{ secrets.CR_PAT }}
         timeout-minutes: 30
         steps:
             - name: Check out repository code
@@ -23,17 +31,22 @@ jobs:
             - name: Install node.js
               uses: actions/setup-node@v3
               with:
-                  node-version: '16'
-            - name: Install circom
+                node-version: '16'
+            - name: Modify system variable PATH
+              shell: bash
               run: |
-                  curl --proto '=https' --tlsv1.2 https://sh.rustup.rs -sSf | sh -s -- -y
-                  source "$HOME/.cargo/env"
-                  ls -R
-                  cd /tmp
-                  git clone https://github.com/iden3/circom.git
-                  cd circom
-                  cargo build --release
-                  cargo install --path circom
+                echo "/root/.cargo/bin" >> $GITHUB_PATH
+            - name: Display Modified PATH
+              run: |
+                echo $PATH
+            - name: Set rust version
+              run: rustup default stable
+            - name: Check rust
+              run: rustc --version
+            - name: Check circom
+              run: circom --version
+            - name: Install yarn
+              run: npm install --global yarn
             - name: Install packages
               run: yarn
             - name: Build
@@ -44,6 +57,11 @@ jobs:
     contracts-test:
         name: Contracts Test
         runs-on: ubuntu-22.04
+        container:
+            image: ghcr.io/jason-ntu/ubuntu-22.04:circom
+            credentials:
+                username: jason-ntu
+                password: ${{ secrets.CR_PAT }}
         timeout-minutes: 30
         steps:
             - name: Check out repository code
@@ -52,18 +70,25 @@ jobs:
               uses: actions/setup-node@v3
               with:
                   node-version: '16'
-            - name: Install circom
+            - name: Update PATH
               run: |
-                  curl --proto '=https' --tlsv1.2 https://sh.rustup.rs -sSf | sh -s -- -y
-                  source "$HOME/.cargo/env"
-                  ls -R
-                  cd /tmp
-                  git clone https://github.com/iden3/circom.git
-                  cd circom
-                  cargo build --release
-                  cargo install --path circom
+                NEW_PATH="/root/.cargo/bin:$PATH"
+                echo "PATH=$NEW_PATH" >> $GITHUB_ENV
+                source $GITHUB_ENV
+            - name: Set rust version
+              run: |
+                echo $PATH
+                rustup default stable
+            - name: Check rust
+              run: rustc --version
+            - name: Check circom
+              run: circom --version
+            - name: Install yarn
+              run: npm install --global yarn
             - name: Install packages
               run: yarn
+            - name: Setup tmate session
+              uses: mxschmitt/action-tmate@v3
             - name: Build
               run: yarn build
             - name: Test
@@ -72,6 +97,11 @@ jobs:
     relay-test:
         name: Relay Test
         runs-on: ubuntu-22.04
+        container:
+            image: ghcr.io/jason-ntu/ubuntu-22.04:circom
+            credentials:
+                username: jason-ntu
+                password: ${{ secrets.CR_PAT }}
         timeout-minutes: 30
         steps:
             - name: Check out repository code
@@ -80,18 +110,20 @@ jobs:
               uses: actions/setup-node@v3
               with:
                   node-version: '16'
-            - name: Install circom
-              run: |
-                  curl --proto '=https' --tlsv1.2 https://sh.rustup.rs -sSf | sh -s -- -y
-                  source "$HOME/.cargo/env"
-                  ls -R
-                  cd /tmp
-                  git clone https://github.com/iden3/circom.git
-                  cd circom
-                  cargo build --release
-                  cargo install --path circom
+            - name: Update environment variable
+              run: export PATH="/root/.cargo/bin:$PATH"
+            - name: Set rust version
+              run: rustup default stable
+            - name: Check rust
+              run: rustc --version
+            - name: Check circom
+              run: circom --version
+            - name: Install yarn
+              run: npm install --global yarn
             - name: Install packages
               run: yarn
+            - name: Setup tmate session
+              uses: mxschmitt/action-tmate@v3
             - name: Build
               run: yarn build
             - name: Test
@@ -100,6 +132,11 @@ jobs:
     frontend-test:
         name: Frontend Test
         runs-on: ubuntu-22.04
+        container:
+            image: ghcr.io/jason-ntu/ubuntu-22.04:circom
+            credentials:
+                username: jason-ntu
+                password: ${{ secrets.CR_PAT }}
         timeout-minutes: 30
         steps:
             - name: Check out repository code
@@ -108,18 +145,20 @@ jobs:
               uses: actions/setup-node@v3
               with:
                   node-version: '16'
-            - name: Install circom
-              run: |
-                  curl --proto '=https' --tlsv1.2 https://sh.rustup.rs -sSf | sh -s -- -y
-                  source "$HOME/.cargo/env"
-                  ls -R
-                  cd /tmp
-                  git clone https://github.com/iden3/circom.git
-                  cd circom
-                  cargo build --release
-                  cargo install --path circom
+            - name: Update environment variable
+              run: export PATH="/root/.cargo/bin:$PATH"
+            - name: Set rust version
+              run: rustup default stable
+            - name: Check rust
+              run: rustc --version
+            - name: Check circom
+              run: circom --version
+            - name: Install yarn
+              run: npm install --global yarn
             - name: Install packages
               run: yarn
+            - name: Setup tmate session
+              uses: mxschmitt/action-tmate@v3
             - name: Build
               run: yarn build
             - name: Test
