@@ -1,4 +1,4 @@
-name: CI
+name: Build, Test and Lint
 run-name: ${{ github.actor }} is testing out GitHub Actions 🚀
 
 on:
@@ -14,115 +14,36 @@ concurrency:
 
 jobs:
     circuits-test:
-        name: Circuits Test
-        runs-on: ubuntu-22.04
-        container:
-            image: ghcr.io/jason-ntu/ubuntu-22.04:circom
-            credentials:
-                username: jason-ntu
-                password: ${{ secrets.CR_PAT }}
-        timeout-minutes: 15
-        steps:
-            - name: Check out repository code
-              uses: actions/checkout@v3
-            - name: Install node.js
-              uses: actions/setup-node@v3
-              with:
-                node-version: '16'
-            - name: Modify system variable PATH
-              run: echo "/root/.cargo/bin" >> $GITHUB_PATH
-            - name: Install yarn
-              run: npm install --global yarn
-            - name: Install packages
-              run: yarn
-            - name: Build
-              run: yarn build
-            - name: Test
-              run: yarn circuits test
+        name: Circuits
+        uses: ./.github/workflows/build-and-test.yml
+        with:
+          target: "circuits"
+        secrets:
+          CR_PAT: ${{ secrets.CR_PAT }}
 
     contracts-test:
-        name: Contracts Test
-        runs-on: ubuntu-22.04
-        container:
-            image: ghcr.io/jason-ntu/ubuntu-22.04:circom
-            credentials:
-                username: jason-ntu
-                password: ${{ secrets.CR_PAT }}
-        timeout-minutes: 15
-        steps:
-            - name: Check out repository code
-              uses: actions/checkout@v3
-            - name: Install node.js
-              uses: actions/setup-node@v3
-              with:
-                node-version: '16'
-            - name: Modify system variable PATH
-              shell: bash
-              run: echo "/root/.cargo/bin" >> $GITHUB_PATH
-            - name: Install yarn
-              run: npm install --global yarn
-            - name: Install packages
-              run: yarn
-            - name: Build
-              run: yarn build
-            - name: Test
-              run: yarn contracts test
+        name: Contracts
+        uses: ./.github/workflows/build-and-test.yml
+        with:
+          target: "contracts"
+        secrets:
+          CR_PAT: ${{ secrets.CR_PAT }}
 
     relay-test:
-        name: Relay Test
-        runs-on: ubuntu-22.04
-        container:
-            image: ghcr.io/jason-ntu/ubuntu-22.04:circom
-            credentials:
-                username: jason-ntu
-                password: ${{ secrets.CR_PAT }}
-        timeout-minutes: 15
-        steps:
-            - name: Check out repository code
-              uses: actions/checkout@v3
-            - name: Install node.js
-              uses: actions/setup-node@v3
-              with:
-                node-version: '16'
-            - name: Modify system variable PATH
-              shell: bash
-              run: echo "/root/.cargo/bin" >> $GITHUB_PATH
-            - name: Install yarn
-              run: npm install --global yarn
-            - name: Install packages
-              run: yarn
-            - name: Build
-              run: yarn build
-            - name: Test
-              run: yarn relay test
-
+        name: Relay
+        uses: ./.github/workflows/build-and-test.yml
+        with:
+          target: "relay"
+        secrets:
+          CR_PAT: ${{ secrets.CR_PAT }}
+    
     frontend-test:
-        name: Frontend Test
-        runs-on: ubuntu-22.04
-        container:
-            image: ghcr.io/jason-ntu/ubuntu-22.04:circom
-            credentials:
-                username: jason-ntu
-                password: ${{ secrets.CR_PAT }}
-        timeout-minutes: 15
-        steps:
-            - name: Check out repository code
-              uses: actions/checkout@v3
-            - name: Install node.js
-              uses: actions/setup-node@v3
-              with:
-                node-version: '16'
-            - name: Modify system variable PATH
-              shell: bash
-              run: echo "/root/.cargo/bin" >> $GITHUB_PATH
-            - name: Install yarn
-              run: npm install --global yarn
-            - name: Install packages
-              run: yarn
-            - name: Build
-              run: yarn build
-            - name: Test
-              run: yarn frontend test
+        name: Frontend
+        uses: ./.github/workflows/build-and-test.yml
+        with:
+          target: "frontend"
+        secrets:
+          CR_PAT: ${{ secrets.CR_PAT }}
 
     lint:
         name: Lint
